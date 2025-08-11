@@ -79,12 +79,9 @@ const projectsController = {
       const projectData = {
         ...req.body,
         links: {
-          demo: req.body.demoLink || null,
+          live: req.body.liveLink || null,
           github: req.body.githubLink || null,
           researchPaper: req.body.researchPaperLink || null,
-          live: req.body.liveLink || null,
-          frontend: req.body.frontendLink || null,
-          backend: req.body.backendLink || null,
           ...req.body.links,
         },
         createdAt: new Date(),
@@ -118,12 +115,9 @@ const projectsController = {
       const updateData = {
         ...req.body,
         links: {
-          demo: req.body.demoLink || null,
+          live: req.body.liveLink || null,
           github: req.body.githubLink || null,
           researchPaper: req.body.researchPaperLink || null,
-          live: req.body.liveLink || null,
-          frontend: req.body.frontendLink || null,
-          backend: req.body.backendLink || null,
           ...req.body.links,
         },
         updatedAt: new Date(),
