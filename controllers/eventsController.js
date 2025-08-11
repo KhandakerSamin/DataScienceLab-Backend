@@ -75,6 +75,7 @@ const eventsController = {
       const db = getDB()
       const eventData = {
         ...req.body,
+        registrationLink: req.body.registrationLink || null,
         createdAt: new Date(),
         updatedAt: new Date(),
       }
@@ -105,6 +106,7 @@ const eventsController = {
 
       const updateData = {
         ...req.body,
+        registrationLink: req.body.registrationLink || null,
         updatedAt: new Date(),
       }
 
