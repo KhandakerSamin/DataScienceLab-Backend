@@ -1,5 +1,8 @@
 const express = require("express")
 const cors = require("cors")
+const multer = require("multer")
+const path = require("path")
+const fs = require("fs")
 require("dotenv").config()
 
 const { connectDB } = require("./db")
@@ -8,12 +11,82 @@ const projectsRoutes = require("./routes/projectsRoutes")
 const clubEventsRoutes = require("./routes/clubEventsRoutes")
 
 const app = express()
-const PORT = process.env.PORT || 5001
+const PORT = process.env.PORT || 5000
+
+const uploadsDir = "uploads"
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true })
+  console.log("Created uploads directory")
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/")
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
+    cb(null, file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname))
+  },
+})
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true)
+    } else {
+      cb(new Error("Only image files are allowed!"), false)
+    }
+  },
+})
 
 // Middleware
 app.use(cors())
 app.use(express.json({ limit: "10mb" }))
 app.use(express.urlencoded({ extended: true, limit: "10mb" }))
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")))
+
+app.post("/api/upload", (req, res) => {
+  upload.single("image")(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      console.error("Multer error:", err)
+      if (err.code === "LIMIT_FILE_SIZE") {
+        return res.status(400).json({ success: false, error: "File too large. Maximum size is 5MB." })
+      }
+      return res.status(400).json({ success: false, error: err.message })
+    } else if (err) {
+      console.error("Upload error:", err)
+      return res.status(400).json({ success: false, error: err.message })
+    }
+
+    try {
+      if (!req.file) {
+        return res.status(400).json({ success: false, error: "No file uploaded" })
+      }
+
+      const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
+
+      console.log("File uploaded successfully:", req.file.filename)
+
+      res.json({
+        success: true,
+        data: {
+          url: fileUrl,
+          filename: req.file.filename,
+          originalName: req.file.originalname,
+          size: req.file.size,
+        },
+      })
+    } catch (error) {
+      console.error("Server error during upload:", error)
+      res.status(500).json({ success: false, error: "Internal server error during file upload" })
+    }
+  })
+})
 
 // Routes
 app.use("/api/events", eventsRoutes)
@@ -25,10 +98,14 @@ app.get("/api/health", (req, res) => {
   res.json({ message: "DS Lab Backend is running!", timestamp: new Date().toISOString() })
 })
 
-// Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack)
-  res.status(500).json({ error: "Something went wrong!" })
+  console.error("Global error handler:", err.stack)
+
+  if (err instanceof multer.MulterError) {
+    return res.status(400).json({ success: false, error: err.message })
+  }
+
+  res.status(500).json({ success: false, error: "Something went wrong!" })
 })
 
 // 404 handler
