@@ -68,9 +68,21 @@ app.post("/api/upload", (req, res) => {
         return res.status(400).json({ success: false, error: "No file uploaded" })
       }
 
-      const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
+      const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get("host")}`
+      const fileUrl = `${baseUrl}/uploads/${req.file.filename}`
 
-      console.log("File uploaded successfully:", req.file.filename)
+      console.log("File uploaded successfully:", {
+        filename: req.file.filename,
+        originalName: req.file.originalname,
+        size: req.file.size,
+        url: fileUrl,
+        path: req.file.path,
+      })
+
+      if (!fs.existsSync(req.file.path)) {
+        console.error("File was not saved properly:", req.file.path)
+        return res.status(500).json({ success: false, error: "File upload failed - file not saved" })
+      }
 
       res.json({
         success: true,
@@ -86,6 +98,22 @@ app.post("/api/upload", (req, res) => {
       res.status(500).json({ success: false, error: "Internal server error during file upload" })
     }
   })
+})
+
+app.get("/api/verify-image/:filename", (req, res) => {
+  try {
+    const { filename } = req.params
+    const filePath = path.join(__dirname, "uploads", filename)
+
+    if (fs.existsSync(filePath)) {
+      res.json({ success: true, exists: true })
+    } else {
+      res.json({ success: true, exists: false })
+    }
+  } catch (error) {
+    console.error("Error verifying image:", error)
+    res.status(500).json({ success: false, error: "Failed to verify image" })
+  }
 })
 
 // Routes
