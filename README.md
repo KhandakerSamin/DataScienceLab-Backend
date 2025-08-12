@@ -1,129 +1,120 @@
-# DS Lab Portfolio Backend
+<div align="center">
 
-A Node.js backend API for managing Data Science Lab portfolio data including club information, events/news, and projects.
+# 🧬 DS Lab Portfolio Backend
 
-## Features
+**A comprehensive Node.js backend API for managing Data Science Lab portfolio data**
 
-- **Club Management**: CRUD operations for club data
-- **Events & News**: Manage events and news with filtering capabilities
-- **Projects**: Full project management with status and category filtering
-- **MongoDB Integration**: Native MongoDB driver (no Mongoose)
-- **RESTful API**: Clean and consistent API endpoints
-- **Error Handling**: Comprehensive error handling and validation
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
+[![Express.js](https://img.shields.io/badge/Express.js-4.19+-blue.svg)](https://expressjs.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-6.8+-green.svg)](https://mongodb.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## Setup Instructions
+*Powering data science education with modern web technologies*
 
-1. **Clone and Install**
-   \`\`\`bash
-   git clone <repository-url>
-   cd ds-lab-backend
-   npm install
-   \`\`\`
+</div>
 
-2. **Environment Configuration**
-   \`\`\`bash
-   cp .env.example .env
-   \`\`\`
-   Edit `.env` and add your MongoDB URI:
-   \`\`\`
-   MONGODB_URI=mongodb://localhost:27017/ds_lab_portfolio
-   PORT=5000
-   \`\`\`
+---
 
-3. **Start the Server**
-   \`\`\`bash
-   # Development mode
-   npm run dev
-   
-   # Production mode
-   npm start
-   \`\`\`
+## 📋 Table of Contents
 
-4. **Seed Database (Optional)**
-   \`\`\`bash
-   node scripts/seedData.js
-   \`\`\`
+- [✨ Features](#-features)
+- [🚀 Quick Start](#-quick-start)
+- [🛠️ Tech Stack](#️-tech-stack)
+- [📡 API Documentation](#-api-documentation)
+- [🗂️ Project Structure](#️-project-structure)
+- [🔧 Configuration](#-configuration)
+- [📊 Database Schema](#-database-schema)
+- [🔒 Security Features](#-security-features)
+- [🐛 Troubleshooting](#-troubleshooting)
+- [🤝 Contributing](#-contributing)
 
-## API Endpoints
+---
 
-### Club Routes (`/api/club`)
-- `GET /` - Get all club data
-- `GET /:id` - Get club data by ID
-- `POST /` - Create new club data
-- `PUT /:id` - Update club data
-- `DELETE /:id` - Delete club data
+## ✨ Features
 
-### Events Routes (`/api/events`)
-- `GET /` - Get all events/news (supports query params: type, limit, skip)
-- `GET /type/:type` - Get events by type (event/news)
-- `GET /:id` - Get event by ID
-- `POST /` - Create new event
-- `PUT /:id` - Update event
-- `DELETE /:id` - Delete event
+### 🎯 Core Functionality
+- **Club Management** - Complete CRUD operations for DS club information
+- **Events & News** - Dynamic event management with registration links
+- **Club Events** - Specialized workshop and bootcamp management
+- **Project Portfolio** - Comprehensive project showcase with multiple link types
+- **File Upload** - Secure image upload with automatic URL generation
 
-### Projects Routes (`/api/projects`)
-- `GET /` - Get all projects (supports query params: status, category, limit, skip)
-- `GET /status/:status` - Get projects by status
-- `GET /category/:category` - Get projects by category
-- `GET /:id` - Get project by ID
-- `POST /` - Create new project
-- `PUT /:id` - Update project
-- `DELETE /:id` - Delete project
+### 🔧 Technical Features
+- **RESTful API** - Clean, consistent endpoint design
+- **MongoDB Integration** - Native driver implementation (no Mongoose)
+- **Image Processing** - Multer-based file handling
+- **Error Handling** - Comprehensive validation and error responses
+- **Admin Dashboard** - Secure admin interface with authentication
+- **Mobile Responsive** - Full mobile support with hamburger navigation
 
-## Example API Usage
+---
 
-### Create a new event:
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18+ 
+- MongoDB 6.8+
+- npm or yarn
+
+### Installation
+
 \`\`\`bash
-curl -X POST http://localhost:5000/api/events \
-  -H "Content-Type: application/json" \
-  -d '{
-    "type": "event",
-    "title": "AI Workshop",
-    "date": "2025-12-01",
-    "time": "10:00 AM - 2:00 PM",
-    "location": "Lab 301",
-    "description": "Introduction to AI concepts"
-  }'
+# Clone the repository
+git clone <repository-url>
+cd ds-lab-backend
+
+# Install dependencies
+npm install
+
+# Create uploads directory
+npm run setup
+
+# Configure environment
+cp .env.example .env
+# Edit .env with your MongoDB URI
+
+# Seed database (optional)
+node scripts/seedData.js
+
+# Start development server
+npm run dev
 \`\`\`
 
-### Get all completed projects:
-\`\`\`bash
-curl http://localhost:5000/api/projects/status/completed
-\`\`\`
+### 🎉 You're ready to go!
+Server will be running at `http://localhost:5000`
 
-### Update club information:
-\`\`\`bash
-curl -X PUT http://localhost:5000/api/club/[club_id] \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Updated Club Name",
-    "members": 200
-  }'
-\`\`\`
+---
 
-## Database Collections
+## 🛠️ Tech Stack
 
-- **club**: Club information and details
-- **events**: Events and news data
-- **projects**: Project portfolio data
+| Technology | Purpose | Version |
+|------------|---------|---------|
+| **Node.js** | Runtime Environment | 18+ |
+| **Express.js** | Web Framework | 4.19+ |
+| **MongoDB** | Database | 6.8+ |
+| **Multer** | File Upload | 1.4+ |
+| **CORS** | Cross-Origin Requests | 2.8+ |
+| **Dotenv** | Environment Variables | 16.4+ |
 
-## Error Handling
+---
 
-All endpoints return consistent error responses:
-\`\`\`json
-{
-  "success": false,
-  "error": "Error message"
-}
-\`\`\`
+## 📡 API Documentation
 
-## Success Responses
+### 🔐 Authentication
+Admin dashboard protected with session-based authentication (30-minute expiry)
 
-All successful responses follow this format:
-\`\`\`json
+### 📁 File Upload
+```http
+POST /api/upload
+Content-Type: multipart/form-data
+
+# Response
 {
   "success": true,
-  "data": [...],
-  "count": 10,
-  "total": 50
+  "data": {
+    "url": "http://localhost:5000/uploads/image-1234567890.jpg",
+    "filename": "image-1234567890.jpg",
+    "originalName": "your-image.jpg",
+    "size": 245760
+  }
 }
