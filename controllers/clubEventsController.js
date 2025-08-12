@@ -68,13 +68,17 @@ const clubEventsController = {
   createClubEvent: async (req, res) => {
     try {
       const db = getDB()
+      console.log("Creating club event with data:", req.body)
+
       const clubEventData = {
         ...req.body,
+        image: req.body.image || null, // Explicitly handle image field
         registrationLink: req.body.registrationLink || null,
         createdAt: new Date(),
         updatedAt: new Date(),
       }
 
+      console.log("Final club event data to save:", clubEventData)
       const result = await db.collection("clubEvents").insertOne(clubEventData)
 
       res.status(201).json({
@@ -99,12 +103,16 @@ const clubEventsController = {
       const { id } = req.params
       const db = getDB()
 
+      console.log("Updating club event with data:", req.body)
+
       const updateData = {
         ...req.body,
+        image: req.body.image || null, // Explicitly handle image field
         registrationLink: req.body.registrationLink || null,
         updatedAt: new Date(),
       }
 
+      console.log("Final update data:", updateData)
       const result = await db.collection("clubEvents").updateOne({ _id: new ObjectId(id) }, { $set: updateData })
 
       if (result.matchedCount === 0) {
@@ -114,9 +122,12 @@ const clubEventsController = {
         })
       }
 
+      const updatedEvent = await db.collection("clubEvents").findOne({ _id: new ObjectId(id) })
+
       res.json({
         success: true,
         message: "Club event updated successfully",
+        data: updatedEvent,
       })
     } catch (error) {
       console.error("Error updating club event:", error)
