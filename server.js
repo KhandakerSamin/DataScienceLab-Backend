@@ -10,6 +10,8 @@ const eventsRoutes = require("./routes/eventsRoutes")
 const projectsRoutes = require("./routes/projectsRoutes")
 const clubEventsRoutes = require("./routes/clubEventsRoutes")
 const teamRoutes = require("./routes/teamRoutes")
+const clubMembersRoutes = require("./routes/clubMembersRoutes")
+const galleryRoutes = require("./routes/galleryRoutes")
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -102,6 +104,8 @@ app.use("/api/events", eventsRoutes)
 app.use("/api/projects", projectsRoutes)
 app.use("/api/clubEvents", clubEventsRoutes)
 app.use("/api/team", teamRoutes)
+app.use("/api/clubMembers", clubMembersRoutes)
+app.use("/api/gallery", galleryRoutes)
 
 // Health check route
 app.get("/api/health", (req, res) => {
