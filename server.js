@@ -9,6 +9,7 @@ const { connectDB } = require("./db")
 const eventsRoutes = require("./routes/eventsRoutes")
 const projectsRoutes = require("./routes/projectsRoutes")
 const clubEventsRoutes = require("./routes/clubEventsRoutes")
+const teamRoutes = require("./routes/teamRoutes")
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -100,6 +101,7 @@ app.post("/api/upload", (req, res) => {
 app.use("/api/events", eventsRoutes)
 app.use("/api/projects", projectsRoutes)
 app.use("/api/clubEvents", clubEventsRoutes)
+app.use("/api/team", teamRoutes)
 
 // Health check route
 app.get("/api/health", (req, res) => {
