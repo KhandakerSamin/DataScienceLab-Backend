@@ -7,6 +7,7 @@ const {
   createTeamMember,
   updateTeamMember,
   deleteTeamMember,
+  clearAllTeamMembers, // Added clear function import
 } = require("../controllers/teamController")
 
 // Get all team members
@@ -26,5 +27,7 @@ router.put("/:id", updateTeamMember)
 
 // Delete team member
 router.delete("/:id", deleteTeamMember)
+
+router.delete("/clear-all", clearAllTeamMembers)
 
 module.exports = router

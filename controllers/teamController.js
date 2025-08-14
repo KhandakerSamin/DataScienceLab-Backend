@@ -101,33 +101,10 @@ const seedTeamMembers = [
   },
 ]
 
-const autoSeedTeamData = async (db) => {
-  try {
-    const count = await db.collection("team").countDocuments()
-
-    if (count === 0) {
-      console.log("Team collection is empty, auto-seeding data...")
-
-      const teamMembersWithTimestamps = seedTeamMembers.map((member) => ({
-        ...member,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }))
-
-      await db.collection("team").insertMany(teamMembersWithTimestamps)
-      console.log(`Auto-seeded ${teamMembersWithTimestamps.length} team members`)
-    }
-  } catch (error) {
-    console.error("Error auto-seeding team data:", error)
-  }
-}
-
 // Get all team members
 const getAllTeamMembers = async (req, res) => {
   try {
     const db = getDB()
-
-    await autoSeedTeamData(db)
 
     const teamMembers = await db.collection("team").find({}).sort({ order: 1, createdAt: -1 }).toArray()
 
@@ -336,6 +313,27 @@ const deleteTeamMember = async (req, res) => {
   }
 }
 
+// Clear all team members
+const clearAllTeamMembers = async (req, res) => {
+  try {
+    const db = getDB()
+
+    const result = await db.collection("team").deleteMany({})
+
+    res.json({
+      success: true,
+      message: `Cleared ${result.deletedCount} team members`,
+      deletedCount: result.deletedCount,
+    })
+  } catch (error) {
+    console.error("Error clearing team members:", error)
+    res.status(500).json({
+      success: false,
+      error: "Failed to clear team members",
+    })
+  }
+}
+
 module.exports = {
   getAllTeamMembers,
   getTeamMembersByPosition,
@@ -343,4 +341,5 @@ module.exports = {
   createTeamMember,
   updateTeamMember,
   deleteTeamMember,
+  clearAllTeamMembers,
 }
